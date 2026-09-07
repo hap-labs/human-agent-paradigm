@@ -1,0 +1,148 @@
+# Release workflow: structural check + npm publish (Trusted Publishing, no token) + GitHub Release
+# Adapted from the open-source-guide template pack (run 20260906-132142).
+# Publishing uses npm Trusted Publishing (OIDC): npm exchanges the GitHub Actions OIDC token for a
+# short-lived publishing credential at publish time, so NO npm token/secret is needed. Provenance is
+# generated automatically for public repos/packages, so no --provenance flag is required.
+# Before the first publish succeeds, add the Trusted Publisher on npmjs.com (package Settings ->
+# Trusted publishing -> GitHub Actions -> org hap-labs / repo human-agent-paradigm /
+# workflow filename publish.yml / allowed action npm publish) - see the comment above the publishing step.
+# then push a tag (v*) or trigger manually via workflow_dispatch.
+# - Tag push (v*) must match package.json version.
+# - Manual dispatch publishes npm; optionally provide tag_name to also create the GitHub Release.
+
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: "Tag to release (e.g. v1.0.0). Leave blank to publish npm only."
+        required: false
+        type: string
+        default: ""
+
+jobs:
+  build:
+    name: Build and test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read    # least privilege: the build job needs no write access
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6
+        with:
+          version: 11.25.0
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          # No dependency caching in the release build: this zero-dependency package gains nothing
+          # from a pnpm cache, and npm docs recommend against caching in release builds; dropping it
+          # also keeps the least-privileged build job free of extra GITHUB_TOKEN cache scopes.
+          node-version: 24      # align the toolchain with the publishing job (Node 24 bundles npm 11.x)
+
+      - name: Verify tag matches package version
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          PKG_VERSION="$(node -p "require('./package.json').version")"
+          if [ "$TAG_VERSION" != "$PKG_VERSION" ]; then
+            echo "::error::Tag '${GITHUB_REF_NAME}' does not match package.json version '${PKG_VERSION}'."
+            exit 1
+          fi
+
+      - name: Verify manual release tag matches package version
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          TAG_NAME: ${{ inputs.tag_name }}
+        run: |
+          TAG="${TAG_NAME}"
+          if [ -n "$TAG" ]; then
+            PKG_VERSION="$(node -p "require('./package.json').version")"
+            if [ "$TAG" != "v${PKG_VERSION}" ]; then
+              echo "::error::Tag '${TAG}' does not match package.json version '${PKG_VERSION}'."
+              exit 1
+            fi
+          fi
+
+      - name: Install dependencies (frozen lockfile)
+        run: pnpm install --frozen-lockfile
+
+      - name: Preflight package contents
+        run: npm pack --dry-run
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: dist
+          path: .
+          if-no-files-found: error
+
+  publish:
+    name: Publish npm + GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write     # GitHub Release + attestation
+      id-token: write     # OIDC for npm Trusted Publishing + provenance
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: dist
+          path: .
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6
+        with:
+          version: 11.25.0
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 24      # Trusted Publishing requires npm >= 11.5.1 (Node 24 bundles npm 11.19.0)
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Determine release tag (tag push)
+        id: release-tag-push
+        if: startsWith(github.ref, 'refs/tags/')
+        run: echo "tag=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+
+      - name: Determine release tag (manual)
+        id: release-tag-manual
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          TAG_NAME: ${{ inputs.tag_name }}
+        run: |
+          TAG="${TAG_NAME}"
+          if [ -n "$TAG" ]; then
+            echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          fi
+
+      # npm Trusted Publishing (OIDC, no token): with id-token: write above and NO npm token configured,
+      # npm exchanges the GitHub Actions OIDC token for a short-lived publishing credential.
+      # Provenance is generated automatically for public repos/packages, so --provenance is unnecessary.
+      # One-time setup on npmjs.com (required before the first publish succeeds):
+      #   Package Settings -> Trusted publishing -> GitHub Actions
+      #     Organization or user: hap-labs
+      #     Repository:           human-agent-paradigm
+      #     Workflow filename:    publish.yml   (must match this file name exactly)
+      #     Environment name:     (leave empty)
+      #     Allowed actions:      npm publish   (npm stage publish is always allowed)
+      # Recommended after the first successful publish: Package Settings -> Publishing access ->
+      # "Require two-factor authentication and disallow tokens", then revoke any obsolete automation tokens.
+      - name: Publish npm (Trusted Publishing, no token)
+        run: npm publish --access public
+
+      - name: Create GitHub Release
+        if: steps.release-tag-push.outputs.tag != '' || steps.release-tag-manual.outputs.tag != ''
+        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2
+        with:
+          tag_name: ${{ steps.release-tag-push.outputs.tag || steps.release-tag-manual.outputs.tag }}
+          generate_release_notes: true
+          draft: false
