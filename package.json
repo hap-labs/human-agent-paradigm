@@ -1,6 +1,6 @@
 {
   "name": "@hap-labs/human-agent-paradigm",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Human-Agent Paradigm (HAP) content package: the Constitution, the Derived Specification, the Conformance Checklist, and the Contract / Decision-Request / Delivery-Report templates in Simplified Chinese (ZH_CN) and English (EN).",
   "license": "MIT",
   "repository": {
