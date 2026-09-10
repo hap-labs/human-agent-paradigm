@@ -2,12 +2,12 @@
 
 > English version: [TRANSLATION_GLOSSARY.md](../EN/TRANSLATION_GLOSSARY.md)
 
-治理层文档（`assets/` 下六份冻结文档及其官方译本、以及由它们驱动的流程记录）翻译与一致性审校的统一基准。翻译或审校任何治理材料时使用下列对应关系；新增行须说明理由，并保持表格按英文术语排序。
+治理层文档（`../../assets` 下六份冻结文档及其官方译本、以及由它们驱动的流程记录）翻译与一致性审校的统一基准。翻译或审校任何治理材料时使用下列对应关系；新增行须说明理由，并保持表格按英文术语排序。
 
 | English                           | 中文                               | 语境/备注                                                            |
 |:----------------------------------|:-----------------------------------|:---------------------------------------------------------------------|
 | Human-Agent Paradigm (HAP)        | 人机协作范式 / 人与 Agent 协作范式 | 专有名词；产品名                                                     |
-| constitution                      | 宪法                               | 唯一权威文档：`assets/ZH_CN/HUMAN_AGENT_PARADIGM.md`                 |
+| constitution                      | 宪法                               | 唯一权威文档：`../../assets/ZH_CN/HUMAN_AGENT_PARADIGM.md`           |
 | derived specification             | 派生规范                           | `DERIVED_SPECIFICATION`                                              |
 | conformance self-check checklist  | 符合性自检清单                     | `CONFORMANCE_CHECKLIST`                                              |
 | contract                          | 契约                               | 已签署的 C1–C10 契约                                                 |
@@ -53,7 +53,7 @@
 ## 规则
 
 1. P0–P7、C1–C10、A1–A7…J1–J7、★ 标记与版本串一律不翻译。
-2. 冻结文档正文内的文件名引用指向同一语言目录下的同名文件（例如 `assets/EN/DERIVED_SPECIFICATION.md` 内引用
+2. 冻结文档正文内的文件名引用指向同一语言目录下的同名文件（例如 `../../assets/EN/DERIVED_SPECIFICATION.md` 内引用
    `HUMAN_AGENT_PARADIGM`）；冻结中文原文正文内嵌的规范小写文件名引用保持原样（内容冻结不可改），工具复制到 `.hap/docs/`
    时使用规范小写名。
 3. 已随代码注释、README（EN）与注入契约文本发布的既有英文措辞优先（如 “hard requirement”、“multi-view review”、“owner-decision
@@ -63,10 +63,11 @@
 
 ## 语言目录与新增语言
 
-仓库语言文档按语言分目录，语言码大写、复合码用下划线：`assets/ZH_CN/`（冻结中文原文）、`assets/EN/`（英文译本）、`docs/EN/`、
-`docs/ZH_CN/`——目录内文件名为纯 `<NAME>.md`（大写+下划线连接，无语言后缀）。
+仓库语言文档按语言分目录，语言码大写、复合码用下划线：`../../assets/ZH_CN`（冻结中文原文）、`../../assets/EN`（英文译本）、
+`../EN`、
+``——目录内文件名为纯 `<NAME>.md`（大写+下划线连接，无语言后缀）。
 
 新增语言：
 
-1. 在 `assets/` 下建立同名语言目录（如 `JA/`；复合码用下划线），把文档译为目录内纯 `<NAME>.md`；
+1. 在 `../../assets` 下建立同名语言目录（如 `JA/`；复合码用下划线），把文档译为目录内纯 `<NAME>.md`；
 2. 使用前在本术语表与 README「语言规则」节登记。

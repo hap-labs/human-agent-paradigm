@@ -3,14 +3,14 @@
 > 简体中文版本：[TRANSLATION_GLOSSARY.md](../ZH_CN/TRANSLATION_GLOSSARY.md)
 
 The unified basis for translating and reviewing the consistency of governance-layer documents (the six frozen documents
-under `assets/` and their official translations, plus the process records they drive). Use the following correspondences
-whenever translating or reviewing any governance material; any new row must state its rationale and keep the table
-sorted by the English term.
+under `../../assets` and their official translations, plus the process records they drive). Use the following
+correspondences whenever translating or reviewing any governance material; any new row must state its rationale and keep
+the table sorted by the English term.
 
 | English                           | Chinese                            | Context / Notes                                                                         |
 |:----------------------------------|:-----------------------------------|:----------------------------------------------------------------------------------------|
 | Human-Agent Paradigm (HAP)        | 人机协作范式 / 人与 Agent 协作范式 | Proper noun; product name                                                               |
-| constitution                      | 宪法                               | Sole authoritative document: `assets/ZH_CN/HUMAN_AGENT_PARADIGM.md`                     |
+| constitution                      | 宪法                               | Sole authoritative document: `../../assets/ZH_CN/HUMAN_AGENT_PARADIGM.md`               |
 | derived specification             | 派生规范                           | `DERIVED_SPECIFICATION`                                                                 |
 | conformance self-check checklist  | 符合性自检清单                     | `CONFORMANCE_CHECKLIST`                                                                 |
 | contract                          | 契约                               | A signed C1–C10 contract                                                                |
@@ -57,9 +57,9 @@ sorted by the English term.
 
 1. P0–P7, C1–C10, A1–A7…J1–J7, the ★ marker, and version strings are never translated.
 2. Within a frozen document's body, a file-name reference points to the same-named file in the same language directory
-   (e.g. a reference inside `assets/EN/DERIVED_SPECIFICATION.md` to `HUMAN_AGENT_PARADIGM`); the lowercase canonical
-   file-name references embedded in the frozen Simplified Chinese original remain unchanged (the content is frozen and
-   must not be altered), and the tool copies them to `.hap/docs/` under their canonical lowercase names.
+   (e.g. a reference inside `../../assets/EN/DERIVED_SPECIFICATION.md` to `HUMAN_AGENT_PARADIGM`); the lowercase
+   canonical file-name references embedded in the frozen Simplified Chinese original remain unchanged (the content is
+   frozen and must not be altered), and the tool copies them to `.hap/docs/` under their canonical lowercase names.
 3. Existing English wording already published with code comments, the README (EN), and injected contract text takes
    precedence (e.g. "hard requirement", "multi-view review", "owner-decision contract").
 4. The bilingual copies of a record are written in the same round to state the same fact — facts and IDs must match,
@@ -69,11 +69,11 @@ sorted by the English term.
 ## Language directories and adding a language
 
 Repository language documents are organized by language directory, language codes uppercase and composite codes
-underscored: `assets/ZH_CN/` (frozen Simplified Chinese originals), `assets/EN/` (English translations), `docs/EN/`,
-`docs/ZH_CN/` — files inside a directory use a plain `<NAME>.md` (uppercase + underscore, no language suffix).
+underscored: `../../assets/ZH_CN` (frozen Simplified Chinese originals), `../../assets/EN` (English translations), ``,
+`../ZH_CN` — files inside a directory use a plain `<NAME>.md` (uppercase + underscore, no language suffix).
 
 Adding a language:
 
-1. Create a same-named language directory under `assets/` (e.g. `JA/`; composite codes underscored), and translate the
-   documents into plain `<NAME>.md` files inside it;
+1. Create a same-named language directory under `../../assets` (e.g. `JA/`; composite codes underscored), and translate
+   the documents into plain `<NAME>.md` files inside it;
 2. Register it here in this glossary and in the README "Language rules" section before use.

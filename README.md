@@ -3,7 +3,7 @@
 The **governance content package** of the Human-Agent Paradigm (HAP): six frozen governance documents and their
 structural self-check tool, published as a standalone npm package so that the content.
 
-**English** | [简体中文](README.zh-CN.md)
+**English** | [简体中文](docs/ZH_CN/README.md)
 
 ## Contents
 

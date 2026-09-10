@@ -10,8 +10,8 @@
   "files": [
     "assets",
     "README.md",
-    "README.zh-CN.md",
-    "CHANGELOG.md"
+    "docs/ZH_CN/README.md",
+    ".github/CHANGELOG.md"
   ],
   "publishConfig": {
     "access": "public"
